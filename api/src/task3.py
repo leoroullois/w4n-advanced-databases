@@ -6,7 +6,7 @@ import json
 from psycopg2.sql import NULL
 # from lib.database import connect, insert_many, delete_from
 
-from data_generator import list_of_names, list_of_surnames, random_date
+from data_generator import list_of_names, list_of_surnames, list_of_countries, random_date, random_phone
 
 from basic_data import (
     NB_MANAGERS,
@@ -32,8 +32,8 @@ def generate_users():
 
     for i in range(1, NB_USERS+1):
         # Defining basing user info
-        firstname = random.choice(l_last_name)
-        lastname = random.choice(l_names)
+        firstname = random.choice(list_of_names())
+        lastname = random.choice(list_of_surnames())
         date_of_birth = random_date('1970-1-1','2010-1-1','%Y-%m-%d',random.random())
 
         # Adding all of the user info into a single table
@@ -42,15 +42,13 @@ def generate_users():
                 "user_id": i,
                 "user_first_name": firstname,
                 "user_last_name": lastname,
-                "user_phone_number": random.choice(l_phone_numbers),
+                "user_phone_number": random_phone(),
                 "user_date_of_birth": date_of_birth,
-                "user_encrypted_password": hashlib.sha256(
-                    random.choice(l_password).encode()
-                ).hexdigest(),
-                "user_created_at": iso(random.choice(get_dates("2021"))),
-                "user_last_connected": iso(random.choice(get_dates("2023"))),
-                "user_updated_at": iso(random.choice(get_dates("2022"))),
-                "user_country": random.choice(l_countries),
+                "user_encrypted_password": hashlib.sha256(random.choice(l_password).encode()).hexdigest(),
+                "user_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "user_last_connected": random_date('2016-1-1 1:30 PM','2023-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "user_updated_at": random_date('2016-1-1 1:30 PM','2023-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "user_country": random.choice(list_of_countries()),
                 "user_email": f"{firstname.lower()}.{lastname.lower()}{date_of_birth[:4]}@{random.choice(l_email)}",
             }
         )
