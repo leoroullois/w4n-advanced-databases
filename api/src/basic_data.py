@@ -5,39 +5,6 @@ NB_USERS = 150
 NB_EMPLOYEES = 30
 NB_MANAGERS = 10
 
-l_random_words = [
-    "lorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "curabitur",
-    "vel",
-    "hendrerit",
-    "libero",
-    "eleifend",
-    "blandit",
-    "nunc",
-    "ornare",
-    "odio",
-    "ut",
-    "orci",
-    "gravida",
-    "imperdiet",
-    "nullam",
-    "purus",
-    "lacinia",
-    "a",
-    "pretium",
-    "quis",
-    "congue",
-    "praesent",
-    "sagittis"
-]
-
 l_email = [
     "gmail.com",
     "yahoo.com",

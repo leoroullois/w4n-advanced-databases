@@ -3,6 +3,8 @@ import datetime
 import hashlib
 import json
 
+from essential_generators import DocumentGenerator
+
 from psycopg2.sql import NULL
 # from lib.database import connect, insert_many, delete_from
 
@@ -14,9 +16,10 @@ from basic_data import (
     NB_POSTS,
     NB_COMMENTS,
     NB_USERS,
-    l_random_words,
     l_email,
 )
+
+GENERATOR = DocumentGenerator()
 
 
 def generate_users():
@@ -57,10 +60,10 @@ def generate_posts():
         posts.append(
             {
                 "post_id": i,
-                "post_title": " ".join(random.choices(l_names, k=5)),
-                "post_content": " ".join(random.choices(l_names, k=10)),
-                "post_created_at": iso(random.choice(get_dates("2022"))),
-                "post_updated_at": iso(random.choice(get_dates("2023"))),
+                "post_title": f"{GENERATOR.sentence()}",
+                "post_content": f"{GENERATOR.paragraph()}",
+                "post_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "post_updated_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
                 "user_id": random.randint(1, NB_USERS),
                 "moderator_id": random.randint(1, NB_MODERATORS),
             }
@@ -188,7 +191,7 @@ def delete_previous_data(conn, curr):
 #         conn.commit()
 #         conn.close()
 
-users = generate_users()
+users = generate_posts()
 for x in range(len(users)):
     print(users[x])
 
