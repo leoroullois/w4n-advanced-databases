@@ -8,9 +8,9 @@ from essential_generators import DocumentGenerator
 from psycopg2.sql import NULL
 # from lib.database import connect, insert_many, delete_from
 
-from data_generator import list_of_names, list_of_surnames, list_of_countries, list_of_passwords, random_date, random_phone
+from src.data_generator import list_of_names, list_of_surnames, list_of_countries, list_of_passwords, random_date, random_phone
 
-from basic_data import (
+from src.basic_data import (
     NB_MANAGERS,
     NB_MODERATORS,
     NB_POSTS,
@@ -161,37 +161,32 @@ def delete_previous_data(conn, curr):
     delete_from(conn, curr, "employees")
     delete_from(conn, curr, "departments")
 
-# def task3(NB_EMPLOYEES: int):
-#     conn, curr = connect()
+def task3(NB_EMPLOYEES: int):
+    conn, curr = connect()
 
-#     try:
-#         delete_previous_data(conn, curr)
+    try:
+        delete_previous_data(conn, curr)
 
-#         departments = generate_departments()
-#         insert_many(conn, curr, departments, "departments")
+        departments = generate_departments()
+        insert_many(conn, curr, departments, "departments")
 
-#         employees = generate_employees(NB_EMPLOYEES)
-#         insert_many(conn, curr, employees, "employees")
+        employees = generate_employees(NB_EMPLOYEES)
+        insert_many(conn, curr, employees, "employees")
 
-#         moderators = generate_moderators(NB_EMPLOYEES)
-#         insert_many(conn, curr, moderators, "moderation_department")
+        moderators = generate_moderators(NB_EMPLOYEES)
+        insert_many(conn, curr, moderators, "moderation_department")
 
-#         users = generate_users()
-#         insert_many(conn, curr, users, "users")
+        users = generate_users()
+        insert_many(conn, curr, users, "users")
 
-#         posts = generate_posts()
-#         insert_many(conn, curr, posts, "posts")
+        posts = generate_posts()
+        insert_many(conn, curr, posts, "posts")
 
-#         comments = generate_comments()
-#         insert_many(conn, curr, comments, "comments")
-#     except Exception as e:
-#         print("Error generating/inserting data : ", e)
-#         conn.rollback()
-#     finally:
-#         conn.commit()
-#         conn.close()
-
-users = generate_posts()
-for x in range(len(users)):
-    print(users[x])
-
+        comments = generate_comments()
+        insert_many(conn, curr, comments, "comments")
+    except Exception as e:
+        print("Error generating/inserting data : ", e)
+        conn.rollback()
+    finally:
+        conn.commit()
+        conn.close()
