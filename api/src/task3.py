@@ -6,7 +6,7 @@ import json
 from psycopg2.sql import NULL
 # from lib.database import connect, insert_many, delete_from
 
-from data_generator import list_of_names, list_of_surnames, list_of_countries, random_date, random_phone
+from data_generator import list_of_names, list_of_surnames, list_of_countries, list_of_passwords, random_date, random_phone
 
 from basic_data import (
     NB_MANAGERS,
@@ -15,13 +15,6 @@ from basic_data import (
     NB_COMMENTS,
     NB_USERS,
     l_random_words,
-    l_last_name,
-    l_names,
-    l_date_of_birth,
-    l_phone_numbers,
-    l_password,
-    get_dates,
-    l_countries,
     l_email,
 )
 
@@ -44,7 +37,7 @@ def generate_users():
                 "user_last_name": lastname,
                 "user_phone_number": random_phone(),
                 "user_date_of_birth": date_of_birth,
-                "user_encrypted_password": hashlib.sha256(random.choice(l_password).encode()).hexdigest(),
+                "user_encrypted_password": hashlib.sha256(random.choice(list_of_passwords()).encode()).hexdigest(),
                 "user_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
                 "user_last_connected": random_date('2016-1-1 1:30 PM','2023-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
                 "user_updated_at": random_date('2016-1-1 1:30 PM','2023-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
