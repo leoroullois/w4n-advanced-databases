@@ -1,5 +1,5 @@
 import datetime
-from lib.database import connect, insert_many
+from src.database import connect, insert_many
 
 
 timestamp_with_timezone = (

@@ -6,7 +6,7 @@ import json
 from essential_generators import DocumentGenerator
 
 from psycopg2.sql import NULL
-# from lib.database import connect, insert_many, delete_from
+from src.database import connect, insert_many, delete_from
 
 from src.data_generator import list_of_names, list_of_surnames, list_of_countries, list_of_passwords, random_date, random_phone
 
