@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from lib.database import connect
+from src.database import connect
 from src.task3 import delete_previous_data, task3
 from src.task2 import task2
 

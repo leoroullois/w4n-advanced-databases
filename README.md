@@ -23,7 +23,7 @@ docker compose up --build
 
 There is multiple containers :
 
-- **db** : PostgreSQL database
+- **db** : PostgreSQL database - database is located under constant IPv4: 172.18.0.3
 - **pgadmin** : Manage PostgreSQL database, run on `http://localhost:8888`
 - **api** : API written in python, run on `http://localhost:5000`.
 

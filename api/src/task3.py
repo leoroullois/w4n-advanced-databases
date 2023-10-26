@@ -3,8 +3,12 @@ import datetime
 import hashlib
 import json
 
+from essential_generators import DocumentGenerator
+
 from psycopg2.sql import NULL
-from lib.database import connect, insert_many, delete_from
+from src.database import connect, insert_many, delete_from
+
+from src.data_generator import list_of_names, list_of_surnames, list_of_countries, list_of_passwords, random_date, random_phone
 
 from src.basic_data import (
     NB_MANAGERS,
@@ -12,16 +16,10 @@ from src.basic_data import (
     NB_POSTS,
     NB_COMMENTS,
     NB_USERS,
-    l_random_words,
-    l_last_name,
-    l_names,
-    l_date_of_birth,
-    l_phone_numbers,
-    l_password,
-    get_dates,
-    l_countries,
     l_email,
 )
+
+GENERATOR = DocumentGenerator()
 
 
 def generate_users():
@@ -29,23 +27,24 @@ def generate_users():
     iso = lambda iso: datetime.datetime.fromisoformat(iso).astimezone().isoformat()
 
     for i in range(1, NB_USERS+1):
-        firstname = random.choice(l_last_name)
-        lastname = random.choice(l_names)
-        date_of_birth = random.choice(l_date_of_birth)
+        # Defining basing user info
+        firstname = random.choice(list_of_names())
+        lastname = random.choice(list_of_surnames())
+        date_of_birth = random_date('1970-1-1','2010-1-1','%Y-%m-%d',random.random())
+
+        # Adding all of the user info into a single table
         users.append(
             {
                 "user_id": i,
                 "user_first_name": firstname,
                 "user_last_name": lastname,
-                "user_phone_number": random.choice(l_phone_numbers),
+                "user_phone_number": random_phone(),
                 "user_date_of_birth": date_of_birth,
-                "user_encrypted_password": hashlib.sha256(
-                    random.choice(l_password).encode()
-                ).hexdigest(),
-                "user_created_at": iso(random.choice(get_dates("2021"))),
-                "user_last_connected": iso(random.choice(get_dates("2023"))),
-                "user_updated_at": iso(random.choice(get_dates("2022"))),
-                "user_country": random.choice(l_countries),
+                "user_encrypted_password": hashlib.sha256(random.choice(list_of_passwords()).encode()).hexdigest(),
+                "user_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "user_last_connected": random_date('2016-1-1 1:30 PM','2023-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "user_updated_at": random_date('2016-1-1 1:30 PM','2023-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "user_country": random.choice(list_of_countries()),
                 "user_email": f"{firstname.lower()}.{lastname.lower()}{date_of_birth[:4]}@{random.choice(l_email)}",
             }
         )
@@ -61,10 +60,10 @@ def generate_posts():
         posts.append(
             {
                 "post_id": i,
-                "post_title": " ".join(random.choices(l_names, k=5)),
-                "post_content": " ".join(random.choices(l_names, k=10)),
-                "post_created_at": iso(random.choice(get_dates("2022"))),
-                "post_updated_at": iso(random.choice(get_dates("2023"))),
+                "post_title": f"{GENERATOR.sentence()}",
+                "post_content": f"{GENERATOR.paragraph()}",
+                "post_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "post_updated_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
                 "user_id": random.randint(1, NB_USERS),
                 "moderator_id": random.randint(1, NB_MODERATORS),
             }
@@ -81,9 +80,9 @@ def generate_comments():
         comments.append(
             {
                 "comment_id": i,
-                "comment_content": " ".join(random.choices(l_random_words, k=10)),
-                "comment_created_at": iso(random.choice(get_dates("2022"))),
-                "comment_updated_at": iso(random.choice(get_dates("2023"))),
+                "comment_content": f"{GENERATOR.sentence()}",
+                "comment_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "comment_updated_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
                 "user_id": random.randint(1, NB_USERS),
                 "post_id": random.randint(1, NB_POSTS),
             }
@@ -97,20 +96,20 @@ def generate_employees(NB_EMPLOYEES: int):
     iso = lambda iso: datetime.datetime.fromisoformat(iso).astimezone().isoformat()
 
     for i in range(1, NB_EMPLOYEES+1):
-        firstname = random.choice(l_last_name)
-        lastname = random.choice(l_names)
-        date_of_birth = random.choice(l_date_of_birth)
+        firstname = random.choice(list_of_names())
+        lastname = random.choice(list_of_surnames())
+        date_of_birth = random_date('1970-1-1','2010-1-1','%Y-%m-%d',random.random())
         employees.append(
             {
                 "employee_id": i,
                 "employee_first_name": firstname,
                 "employee_last_name": lastname,
                 "employee_email": f"{firstname.lower()}.{lastname.lower()}{date_of_birth[:4]}@{random.choice(l_email)}",
-                "employee_phone_number": random.choice(l_phone_numbers),
+                "employee_phone_number": random.choice(random_phone()),
                 "employee_date_of_birth": date_of_birth,
                 "department_id": random.randint(1, 2),
                 "employee_salary": random.randint(1_000, 10_000),
-                "employee_created_at": iso(random.choice(get_dates("2021"))),
+                "employee_created_at": random_date('1970-1-1','2010-1-1','%Y-%m-%d',random.random()),
                 "employee_updated_at": None,
             }
         )
@@ -191,4 +190,3 @@ def task3(NB_EMPLOYEES: int):
     finally:
         conn.commit()
         conn.close()
-
