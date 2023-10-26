@@ -80,9 +80,9 @@ def generate_comments():
         comments.append(
             {
                 "comment_id": i,
-                "comment_content": " ".join(random.choices(l_random_words, k=10)),
-                "comment_created_at": iso(random.choice(get_dates("2022"))),
-                "comment_updated_at": iso(random.choice(get_dates("2023"))),
+                "comment_content": f"{GENERATOR.sentence()}",
+                "comment_created_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
+                "comment_updated_at": random_date('2000-1-1 1:30 PM','2016-1-1 4:50 AM','%Y-%m-%d %I:%M %p',random.random()),
                 "user_id": random.randint(1, NB_USERS),
                 "post_id": random.randint(1, NB_POSTS),
             }
@@ -96,20 +96,20 @@ def generate_employees(NB_EMPLOYEES: int):
     iso = lambda iso: datetime.datetime.fromisoformat(iso).astimezone().isoformat()
 
     for i in range(1, NB_EMPLOYEES+1):
-        firstname = random.choice(l_last_name)
-        lastname = random.choice(l_names)
-        date_of_birth = random.choice(l_date_of_birth)
+        firstname = random.choice(list_of_names())
+        lastname = random.choice(list_of_surnames())
+        date_of_birth = random_date('1970-1-1','2010-1-1','%Y-%m-%d',random.random())
         employees.append(
             {
                 "employee_id": i,
                 "employee_first_name": firstname,
                 "employee_last_name": lastname,
                 "employee_email": f"{firstname.lower()}.{lastname.lower()}{date_of_birth[:4]}@{random.choice(l_email)}",
-                "employee_phone_number": random.choice(l_phone_numbers),
+                "employee_phone_number": random.choice(random_phone()),
                 "employee_date_of_birth": date_of_birth,
                 "department_id": random.randint(1, 2),
                 "employee_salary": random.randint(1_000, 10_000),
-                "employee_created_at": iso(random.choice(get_dates("2021"))),
+                "employee_created_at": random_date('1970-1-1','2010-1-1','%Y-%m-%d',random.random()),
                 "employee_updated_at": None,
             }
         )
