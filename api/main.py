@@ -17,14 +17,39 @@ def main():
 
     @app.route("/task3", methods=["PUT"])
     def run_task3():
-
         NB_EMPLOYEES = request.json["NB_EMPLOYEES"]
+        NB_MANAGERS = request.json["NB_MANAGERS"]
+        NB_POSTS = request.json["NB_POSTS"]
+        NB_MODERATORS = request.json["NB_MODERATORS"]
+        NB_COMMENTS = request.json["NB_COMMENTS"]
+        NB_USERS = request.json["NB_USERS"]
+        NB_CUSTOMERS = request.json["NB_CUSTOMERS"]
+        NB_SELLERS = request.json["NB_SELLERS"]
+        NB_HUMAN_RESOURCES = request.json["NB_HUMAN_RESOURCES"]
+        NB_SALES_MODERATORS = request.json["NB_SALES_MODERATORS"]
+
         try:
-            task3(NB_EMPLOYEES)
+            task3(
+                NB_EMPLOYEES=NB_EMPLOYEES,
+                NB_MANAGERS=NB_MANAGERS,
+                NB_MODERATORS=NB_MODERATORS,
+                NB_USERS=NB_USERS,
+                NB_POSTS=NB_POSTS,
+                NB_COMMENTS=NB_COMMENTS,
+                NB_CUSTOMERS=NB_CUSTOMERS,
+                NB_SELLERS=NB_SELLERS,
+                NB_HUMAN_RESOURCES=NB_HUMAN_RESOURCES,
+                NB_SALES_MODERATORS=NB_SALES_MODERATORS,
+            )
             response = {
                 "success": True,
                 "message": "Data successfully inserted into database",
                 "NB_EMPLOYEES": NB_EMPLOYEES,
+                "NB_MANAGERS": NB_MANAGERS,
+                "NB_POSTS": NB_POSTS,
+                "NB_MODERATORS": NB_MODERATORS,
+                "NB_COMMENTS": NB_COMMENTS,
+                "NB_USERS": NB_USERS,
             }
             return jsonify(response), 200
         except Exception as e:
@@ -60,6 +85,18 @@ def main():
             departments = curr.fetchall()[0][0]
             curr.execute("SELECT COUNT(*) FROM moderation_department;")
             moderators = curr.fetchall()[0][0]
+            curr.execute("SELECT COUNT(*) FROM customers;")
+            customers = curr.fetchall()[0][0]
+            curr.execute("SELECT COUNT(*) FROM human_resources_department;")
+            human_resources_department = curr.fetchall()[0][0]
+            curr.execute("SELECT COUNT(*) FROM marketplace;")
+            marketplace = curr.fetchall()[0][0]
+            curr.execute("SELECT COUNT(*) FROM meetings;")
+            meetings = curr.fetchall()[0][0]
+            curr.execute("SELECT COUNT(*) FROM sales_moderation_department;")
+            sales_moderation_department = curr.fetchall()[0][0]
+            curr.execute("SELECT COUNT(*) FROM sellers;")
+            sellers = curr.fetchall()[0][0]
 
             response = {
                 "success": True,
@@ -68,8 +105,14 @@ def main():
                     "posts": posts,
                     "comments": comments,
                     "employees": employees,
+                    "meetings": meetings,
                     "departments": departments,
-                    "moderators": moderators,
+                    "moderation_department": moderators,
+                    "human_resources_department": human_resources_department,
+                    "sales_moderation_department": sales_moderation_department,
+                    "marketplace": marketplace,
+                    "customers": customers,
+                    "sellers": sellers,
                 },
             }
             return jsonify(response), 200

@@ -3,22 +3,22 @@ import time
 
 
 def list_of_names():
-    file = open('Data/names.txt','r', encoding='utf8')
+    file = open('/app/src/Data/names.txt','r', encoding='utf8')
     names = file.read().splitlines()
     return names
 
 def list_of_surnames():
-    file = open('Data/surnames.txt','r', encoding='utf8')
+    file = open('/app/src/Data/surnames.txt','r', encoding='utf8')
     surnames = file.read().splitlines()
     return surnames
 
 def list_of_countries():
-    file = open('Data/countries.txt','r', encoding='utf8')
+    file = open('/app/src/Data/countries.txt','r', encoding='utf8')
     countries = file.read().splitlines()
     return countries
 
 def list_of_passwords():
-    file = open('Data/passwords.txt','r', encoding='utf8')
+    file = open('/app/src/Data/passwords.txt','r', encoding='utf8')
     passwords = file.read().splitlines()
     return passwords
 
