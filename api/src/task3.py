@@ -14,6 +14,8 @@ from src.data_generator import (
     random_phone,
 )
 
+from src.utils import monitor_function
+
 GENERATOR = DocumentGenerator()
 
 MODERATION_DEPARTMENT_ID = 1
@@ -44,6 +46,7 @@ l_email = [
 ]
 
 
+@monitor_function
 def generate_users(NB_USERS: int):
     users = []
 
@@ -90,6 +93,7 @@ def generate_users(NB_USERS: int):
     return users
 
 
+@monitor_function
 def generate_posts(NB_POSTS: int, NB_USERS: int, NB_MODERATORS: int):
     posts = []
 
@@ -119,6 +123,7 @@ def generate_posts(NB_POSTS: int, NB_USERS: int, NB_MODERATORS: int):
     return posts
 
 
+@monitor_function
 def generate_comments(NB_COMMENTS: int, NB_USERS: int, NB_POSTS: int):
     comments = []
 
@@ -147,6 +152,7 @@ def generate_comments(NB_COMMENTS: int, NB_USERS: int, NB_POSTS: int):
     return comments
 
 
+@monitor_function
 def generate_employees(NB_EMPLOYEES: int):
     employees = []
 
@@ -173,6 +179,7 @@ def generate_employees(NB_EMPLOYEES: int):
     return employees
 
 
+@monitor_function
 def generate_moderators(NB_EMPLOYEES: int, NB_MODERATORS: int):
     moderators = []
     for i in range(1, NB_MODERATORS + 1):
@@ -187,6 +194,7 @@ def generate_moderators(NB_EMPLOYEES: int, NB_MODERATORS: int):
     return moderators
 
 
+@monitor_function
 def generate_departments(NB_MANAGERS: int):
     departments = [
         {
@@ -208,6 +216,7 @@ def generate_departments(NB_MANAGERS: int):
     return departments
 
 
+@monitor_function
 def generate_marketplace(NB_CUSTOMERS: int, NB_SELLERS: int, NB_SALES_MODERATORS: int):
     # sale_id, sale_title, sale_desc, sale_price, customer_id, seller_id, sales_rep_id
     marketplace = []
@@ -226,6 +235,7 @@ def generate_marketplace(NB_CUSTOMERS: int, NB_SELLERS: int, NB_SALES_MODERATORS
     return marketplace
 
 
+@monitor_function
 def generate_sales_moderation_department(
     NB_SALES_MODERATORS: int, NB_MANAGERS: int, NB_SELLERS: int
 ):
@@ -246,6 +256,7 @@ def generate_sales_moderation_department(
     return sales_moderation_department
 
 
+@monitor_function
 def generate_human_resources_department(NB_HUMAN_RESOURCES: int, NB_EMPLOYEES: int):
     # resources_id, employee_id, department_id
     human_resources_department = []
@@ -260,6 +271,7 @@ def generate_human_resources_department(NB_HUMAN_RESOURCES: int, NB_EMPLOYEES: i
     return human_resources_department
 
 
+@monitor_function
 def delete_previous_data(conn, curr):
     delete_from(conn, curr, "comments")
     delete_from(conn, curr, "posts")
@@ -274,6 +286,74 @@ def delete_previous_data(conn, curr):
     delete_from(conn, curr, "meetings")
     delete_from(conn, curr, "users")
 
+
+@monitor_function
+def push_departments(conn,curr, NB_MANAGERS):
+    departments = generate_departments(NB_MANAGERS)
+    insert_many(conn, curr, departments, "departments")
+
+
+@monitor_function
+def push_employees(conn, curr, NB_EMPLOYEES):
+    employees = generate_employees(NB_EMPLOYEES)
+    insert_many(conn, curr, employees, "employees")
+
+@monitor_function
+def push_moderators(conn, curr, NB_EMPLOYEES, NB_MODERATORS):
+    moderators = generate_moderators(NB_EMPLOYEES, NB_MODERATORS)
+    insert_many(conn, curr, moderators, "moderation_department")
+
+@monitor_function
+def push_sales_moderation_department(conn, curr, NB_MODERATORS, NB_MANAGERS, NB_SELLERS):
+    sales_moderation_department = generate_sales_moderation_department(
+        NB_MODERATORS, NB_MANAGERS, NB_SELLERS
+    )
+    insert_many(conn, curr, sales_moderation_department, "sales_moderation_department")
+
+@monitor_function
+def push_human_resources_department(conn, curr, NB_HUMAN_RESOURCES, NB_EMPLOYEES):
+    human_resources_department = generate_human_resources_department(
+        NB_HUMAN_RESOURCES, NB_EMPLOYEES
+    )
+    insert_many(conn, curr, human_resources_department, "human_resources_department")
+
+@monitor_function
+def push_users(conn, curr, NB_USERS):
+    users = generate_users(NB_USERS)
+    insert_many(conn, curr, users, "users")
+    return users
+
+@monitor_function
+def push_posts(conn, curr, NB_POSTS, NB_USERS, NB_MODERATORS):
+    posts = generate_posts(NB_POSTS, NB_USERS, NB_MODERATORS)
+    insert_many(conn, curr, posts, "posts")
+
+@monitor_function
+def push_comments(conn, curr, NB_COMMENTS, NB_USERS, NB_POSTS):
+    comments = generate_comments(NB_COMMENTS, NB_USERS, NB_POSTS)
+    insert_many(conn, curr, comments, "comments")
+
+
+@monitor_function
+def push_customers(conn, curr,users, NB_CUSTOMERS):
+    customers = [
+        {"customer_id": i + 1, "user_id": elt["user_id"]}
+        for i, elt in enumerate(random.sample(users, NB_CUSTOMERS))
+    ]
+    insert_many(conn, curr, customers, "customers")
+
+@monitor_function
+def push_sellers(conn, curr, users, NB_SELLERS):
+    sellers = [
+        {"seller_id": i + 1, "user_id": elt["user_id"]}
+        for i, elt in enumerate(random.sample(users, NB_SELLERS))
+    ]
+    insert_many(conn, curr, sellers, "sellers")
+
+@monitor_function
+def push_marketplace(conn, curr, NB_CUSTOMERS, NB_SELLERS, NB_SALES_MODERATORS):
+    marketplace = generate_marketplace(NB_CUSTOMERS, NB_SELLERS, NB_SALES_MODERATORS)
+    insert_many(conn, curr, marketplace, "marketplace")
 
 def task3(
     NB_EMPLOYEES: int = 10,
@@ -302,48 +382,17 @@ def task3(
 
     delete_previous_data(conn, curr)
 
-    departments = generate_departments(NB_MANAGERS)
-    insert_many(conn, curr, departments, "departments")
-
-    employees = generate_employees(NB_EMPLOYEES)
-    insert_many(conn, curr, employees, "employees")
-
-    moderators = generate_moderators(NB_EMPLOYEES, NB_MODERATORS)
-    insert_many(conn, curr, moderators, "moderation_department")
-
-    sales_moderation_department = generate_sales_moderation_department(
-        NB_MODERATORS, NB_MANAGERS, NB_SELLERS
-    )
-    insert_many(conn, curr, sales_moderation_department, "sales_moderation_department")
-
-    human_resources_department = generate_human_resources_department(
-        NB_HUMAN_RESOURCES, NB_EMPLOYEES
-    )
-    insert_many(conn, curr, human_resources_department, "human_resources_department")
-
-    users = generate_users(NB_USERS)
-    insert_many(conn, curr, users, "users")
-
-    posts = generate_posts(NB_POSTS, NB_USERS, NB_MODERATORS)
-    insert_many(conn, curr, posts, "posts")
-
-    comments = generate_comments(NB_COMMENTS, NB_USERS, NB_POSTS)
-    insert_many(conn, curr, comments, "comments")
-
-    customers = [
-        {"customer_id": i + 1, "user_id": elt["user_id"]}
-        for i, elt in enumerate(random.sample(users, NB_CUSTOMERS))
-    ]
-    insert_many(conn, curr, customers, "customers")
-
-    sellers = [
-        {"seller_id": i + 1, "user_id": elt["user_id"]}
-        for i, elt in enumerate(random.sample(users, NB_SELLERS))
-    ]
-    insert_many(conn, curr, sellers, "sellers")
-
-    marketplace = generate_marketplace(NB_CUSTOMERS, NB_SELLERS, NB_SALES_MODERATORS)
-    insert_many(conn, curr, marketplace, "marketplace")
+    push_departments(conn,curr, NB_MANAGERS)
+    push_employees(conn, curr, NB_EMPLOYEES)
+    push_moderators(conn,curr, NB_EMPLOYEES, NB_MODERATORS)
+    push_sales_moderation_department(conn,curr, NB_MODERATORS, NB_MANAGERS, NB_SELLERS)
+    push_human_resources_department(conn,curr, NB_HUMAN_RESOURCES, NB_EMPLOYEES)
+    users = push_users(conn,curr, NB_USERS)
+    push_posts(conn,curr, NB_POSTS, NB_USERS, NB_MODERATORS)
+    push_comments(conn,curr, NB_COMMENTS, NB_USERS, NB_POSTS)
+    push_customers(conn,curr, users, NB_CUSTOMERS)
+    push_sellers(conn,curr, users, NB_SELLERS)
+    push_marketplace(conn,curr, NB_CUSTOMERS, NB_SELLERS, NB_SALES_MODERATORS)
 
     conn.commit()
     conn.close()

@@ -14,7 +14,7 @@ services:
       # - ./sql/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       ad:
-         ipv4_address: 172.18.0.3
+         # ipv4_address: 172.18.0.3
   pgadmin:
     image: dpage/pgadmin4
     container_name: ad_pgpadmin
@@ -27,7 +27,7 @@ services:
       - ad_pgadmin_data:/var/lib/pgadmin
     networks:
       ad:
-         ipv4_address: 172.18.0.2 
+         # ipv4_address: 172.18.0.2 
   api:
     build:
       context: ./api/
@@ -39,7 +39,7 @@ services:
       - ./api:/app
     networks:
       ad:
-         ipv4_address: 172.18.0.4
+         # ipv4_address: 172.18.0.4
 
 volumes:
   ad_pgdata:

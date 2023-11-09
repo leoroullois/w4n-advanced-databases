@@ -1,5 +1,6 @@
 import datetime
 from src.database import connect, insert_many
+from src.utils import monitor_function
 
 
 timestamp_with_timezone = (
@@ -32,36 +33,80 @@ users = [
 ]
 
 
+@monitor_function
+def bad_users():
+    QUERY = """
+        select users.user_id, nb_bad_comments, nb_bad_posts, user_first_name, user_last_name from users 
+        join (
+            SELECT users.user_id, count(*) as nb_bad_comments from users
+            join comments on users.user_id = comments.user_id
+            WHERE 
+            (
+
+                (comments.comment_content LIKE SOME(ARRAY['%the%', '%in%', '%and%', '%own%']))
+                AND
+                (comments.user_id = users.user_id)
+            )
+            group by users.user_id
+            order by users.user_id asc
+        ) bad_comments on users.user_id = bad_comments.user_id
+        join (
+            SELECT users.user_id, count(*) as nb_bad_posts from users
+            join posts on users.user_id = posts.user_id
+            WHERE 
+            (
+                (
+                    posts.post_content LIKE SOME(ARRAY['%fuck%', '%in%', '%and%', '%own%'])
+                 or
+                    posts.post_title LIKE SOME(ARRAY['%the%', '%in%', '%and%', '%own%'])
+                )
+                AND
+                (posts.user_id = users.user_id)
+            )
+            group by users.user_id
+            order by users.user_id asc
+        ) bad_posts on users.user_id = bad_posts.user_id;
+    """
+    conn, curr = connect()
+    curr.execute(QUERY)
+    curr.fetchall()
+    conn.close()
+    print("Database closed successfully")
+
+
+@monitor_function
 def get_average_age_of_users():
     # SELECT
     conn, curr = connect()
-    # calculate number of years from date of birth
     QUERY = """
-    SELECT AVG(EXTRACT(YEAR FROM AGE(user_date_of_birth))) FROM users;
+        select 
+        avg(extract(year from age(user_date_of_birth))) as average_age, 
+        min(extract(year from age(user_date_of_birth))) as min_age, 
+        max(extract(year from age(user_date_of_birth))) as max_age 
+        from users;
     """
         
-    curr.execute("SELECT user_date_of_birth FROM users;")
+    curr.execute(QUERY)
     data = curr.fetchall()
-    print(data)
     conn.close()
     print("Database closed successfully")
 
 
 def deleting_all_user_not_connected_for_one_year():
     # DELETE
-    # Meetings, Posts, Comments, Seller, Customer, Marketplace
     QUERY = """
-    DELETE FROM users
-USING Users
-	JOIN meetings ON Users.user_id = meetings.user_id
-	JOIN posts ON Users.user_id = posts.user_id
-	JOIN comments ON Users.user_id = comments.user_id
-	JOIN seller ON Users.user_id = seller.user_id
-	JOIN customer ON Users.user_id = customer.user_id
-	JOIN marketplace ON Users.user_id = marketplace.user_id
-WHERE Users.user_id IN (
-    SELECT user_id FROM Users WHERE user_last_connected < NOW() - INTERVAL '1 year'
-);"""
+    delete from users
+using users
+	join meetings on users.user_id = meetings.user_id
+	join posts on users.user_id = posts.user_id
+	join comments on users.user_id = comments.user_id
+	join seller on users.user_id = seller.user_id
+	join customer on users.user_id = customer.user_id
+	join marketplace on users.user_id = marketplace.user_id
+where users.user_id in (
+    select user_id from users where user_last_connected < now() - interval '1 year'
+);
+"""
     pass
 
 
@@ -70,31 +115,31 @@ def select_all_user_sales():
     pass
 
 
+@monitor_function
 def select_all_user_informations(curr):
     QUERY = """
-    SELECT * FROM users
-        LEFT JOIN meetings ON Users.user_id = meetings.user_id
-        LEFT JOIN posts ON Users.user_id = posts.user_id
-        LEFT JOIN comments ON Users.user_id = comments.user_id
-        LEFT JOIN seller ON Users.user_id = seller.user_id
-        LEFT JOIN customer ON Users.user_id = customer.user_id;
+    select * from users
+        left join meetings on users.user_id = meetings.user_id
+        left join posts on users.user_id = posts.user_id
+        left join comments on users.user_id = comments.user_id
+        left join sellers on users.user_id = sellers.user_id
+        left join customers on users.user_id = customers.user_id;
     """
     print("QUERY :", QUERY)
     curr.execute(QUERY)
     data = curr.fetchall()
-    print(data)
     return data
 
 
+@monitor_function
 def increase_all_employee_salaries_by_10_percent_every_year(conn, curr):
     # UPDATE
     QUERY = """
-    UPDATE employees 
-    SET salary = salary * 1.1,
-    	last_updated = NOW()
-    WHERE last_updated < NOW() - INTERVAL '1 year';
+    update employees 
+    set employee_salary = employee_salary * 1.1,
+    	employee_updated_at = now()
+    where ((employee_updated_at < now() - interval '1 year') and (employee_salary < 5000));
     """
-    print("QUERY :", QUERY)
     curr.execute(QUERY)
     conn.commit()
 

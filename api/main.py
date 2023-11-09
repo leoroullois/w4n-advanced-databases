@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from src.database import connect
 from src.task3 import delete_previous_data, task3
 from src.task2 import task2
+from src.task4 import task4
 
 
 def main():
@@ -55,6 +56,43 @@ def main():
         except Exception as e:
             response = {"success": False, "message": f"An error occured: {e}"}
             return jsonify(response), 500
+
+    @app.route("/task4", methods=["PUT"])
+    def run_task4():
+
+        NB_EMPLOYEES = request.json["NB_EMPLOYEES"]
+        NB_MANAGERS = request.json["NB_MANAGERS"]
+        NB_POSTS = request.json["NB_POSTS"]
+        NB_MODERATORS = request.json["NB_MODERATORS"]
+        NB_COMMENTS = request.json["NB_COMMENTS"]
+        NB_USERS = request.json["NB_USERS"]
+        NB_CUSTOMERS = request.json["NB_CUSTOMERS"]
+        NB_SELLERS = request.json["NB_SELLERS"]
+        NB_HUMAN_RESOURCES = request.json["NB_HUMAN_RESOURCES"]
+        NB_SALES_MODERATORS = request.json["NB_SALES_MODERATORS"]
+        try:
+            logs = task4(
+                NB_EMPLOYEES=NB_EMPLOYEES,
+                NB_MANAGERS=NB_MANAGERS,
+                NB_MODERATORS=NB_MODERATORS,
+                NB_USERS=NB_USERS,
+                NB_POSTS=NB_POSTS,
+                NB_COMMENTS=NB_COMMENTS,
+                NB_CUSTOMERS=NB_CUSTOMERS,
+                NB_SELLERS=NB_SELLERS,
+                NB_HUMAN_RESOURCES=NB_HUMAN_RESOURCES,
+                NB_SALES_MODERATORS=NB_SALES_MODERATORS,
+                    )
+            response = {
+                "success": True,
+                "message": "Data successfully inserted into database. Monitoring logs are available in the logs table.",
+                "logs": logs
+            }
+            return jsonify(response), 200
+        except Exception as e:
+            response = {"success": False, "message": f"An error occured: {e}"}
+            return jsonify(response), 500
+
 
     @app.route("/delete", methods=["DELETE"])
     def delete_data():
@@ -122,6 +160,8 @@ def main():
         finally:
             conn.close()
 
+    # task3()
+    # logs = task4()
     app.run(host="0.0.0.0", port=5000)
 
 
