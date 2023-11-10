@@ -1,7 +1,7 @@
 from src.database import connect
 
 from src.task3 import task3
-from src.task2 import bad_users, get_average_age_of_users, increase_all_employee_salaries_by_10_percent_every_year, select_all_user_informations
+from src.task2 import bad_users, get_average_age_of_users, increase_all_employee_salaries_by_10_percent_every_year, most_engaged_users, raise_salary_best_moderators, select_all_user_informations
 
 
 def clean_logs(conn, curr):
@@ -44,6 +44,9 @@ def task4(
         # select_all_user_informations(curr)
         get_average_age_of_users()
         bad_users()
+        most_engaged_users()
+        raise_salary_best_moderators()
+        
 
     # task3(
     #     NB_EMPLOYEES=NB_EMPLOYEES,

@@ -32,6 +32,77 @@ users = [
     },
 ]
 
+@monitor_function
+def raise_salary_best_moderators():
+    QUERY = """
+WITH RankedEmployees AS (
+    SELECT
+        e.employee_id,
+        e.employee_salary,
+        COUNT(p.post_id) AS post_count,
+        NTILE(10) OVER (ORDER BY COUNT(p.post_id) DESC) AS percentile_rank
+    FROM
+        public.employees e
+        INNER JOIN public.moderation_department m ON e.department_id = m.department_id
+        LEFT JOIN public.posts p ON e.employee_id = p.moderator_id
+    WHERE
+        m.department_id IS NOT NULL
+    GROUP BY
+        e.employee_id, e.employee_salary
+)
+
+UPDATE public.employees
+SET employee_salary = employee_salary * 1.1
+WHERE employee_id IN (
+    SELECT
+        employee_id
+    FROM
+        RankedEmployees
+    WHERE
+        percentile_rank = 1  -- Top 10% of employees
+)
+    """
+    conn, curr = connect()
+    curr.execute(QUERY)
+    conn.commit()
+    conn.close()
+    print("Database closed successfully")
+
+@monitor_function
+def most_engaged_users():
+    QUERY = """
+WITH UserEngagement AS (
+    SELECT
+        u.user_id,
+        COUNT(DISTINCT c.comment_id) AS comment_count,
+        COUNT(DISTINCT p.post_id) AS post_count,
+        (COUNT(DISTINCT c.comment_id) + COUNT(DISTINCT p.post_id)) AS total_engagement
+    FROM
+        public.users u
+    LEFT JOIN
+        public.comments c ON u.user_id = c.user_id
+    LEFT JOIN
+        public.posts p ON u.user_id = p.user_id
+    GROUP BY
+        u.user_id
+)
+SELECT
+    user_id,
+    comment_count,
+    post_count,
+    total_engagement,
+    AVG(total_engagement) OVER () AS average_engagement
+FROM
+    UserEngagement
+ORDER BY
+    total_engagement DESC
+LIMIT 100;
+    """
+    conn, curr = connect()
+    curr.execute(QUERY)
+    curr.fetchall()
+    conn.close()
+    print("Database closed successfully")
 
 @monitor_function
 def bad_users():
