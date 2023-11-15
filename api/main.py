@@ -59,30 +59,8 @@ def main():
 
     @app.route("/task4", methods=["PUT"])
     def run_task4():
-
-        NB_EMPLOYEES = request.json["NB_EMPLOYEES"]
-        NB_MANAGERS = request.json["NB_MANAGERS"]
-        NB_POSTS = request.json["NB_POSTS"]
-        NB_MODERATORS = request.json["NB_MODERATORS"]
-        NB_COMMENTS = request.json["NB_COMMENTS"]
-        NB_USERS = request.json["NB_USERS"]
-        NB_CUSTOMERS = request.json["NB_CUSTOMERS"]
-        NB_SELLERS = request.json["NB_SELLERS"]
-        NB_HUMAN_RESOURCES = request.json["NB_HUMAN_RESOURCES"]
-        NB_SALES_MODERATORS = request.json["NB_SALES_MODERATORS"]
         try:
-            logs = task4(
-                NB_EMPLOYEES=NB_EMPLOYEES,
-                NB_MANAGERS=NB_MANAGERS,
-                NB_MODERATORS=NB_MODERATORS,
-                NB_USERS=NB_USERS,
-                NB_POSTS=NB_POSTS,
-                NB_COMMENTS=NB_COMMENTS,
-                NB_CUSTOMERS=NB_CUSTOMERS,
-                NB_SELLERS=NB_SELLERS,
-                NB_HUMAN_RESOURCES=NB_HUMAN_RESOURCES,
-                NB_SALES_MODERATORS=NB_SALES_MODERATORS,
-                    )
+            logs = task4()
             response = {
                 "success": True,
                 "message": "Data successfully inserted into database. Monitoring logs are available in the logs table.",
