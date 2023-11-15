@@ -3,6 +3,7 @@ from src.database import connect
 from src.task3 import delete_previous_data, task3
 from src.task2 import task2
 from src.task4 import task4
+from src.task5 import task5
 
 
 def main():
@@ -71,6 +72,18 @@ def main():
             response = {"success": False, "message": f"An error occured: {e}"}
             return jsonify(response), 500
 
+    @app.route("/task5", methods=["GET"])
+    def run_task5():
+        try:
+            logs = task5()
+            response = {
+                "success": True,
+                "message": "Indexes successfully created."
+            }
+            return jsonify(response), 200
+        except Exception as e:
+            response = {"success": False, "message": f"An error occured: {e}"}
+            return jsonify(response), 500
 
     @app.route("/delete", methods=["DELETE"])
     def delete_data():
@@ -140,6 +153,7 @@ def main():
 
     # task3()
     # logs = task4()
+    # task5()
     app.run(host="0.0.0.0", port=5000)
 
 

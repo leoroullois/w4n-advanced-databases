@@ -1,8 +1,6 @@
 from src.database import connect
-from src.utils import monitor_function
 
 
-@monitor_function
 def look_for_the_most_common_word():
     # select
     QUERY = """
@@ -34,9 +32,7 @@ def look_for_the_most_common_word():
     FROM
         NounData
     WHERE
-        LENGTH(word) > 5            -- Exclude small words
-        --AND word ~ '^[A-Z]+$'       -- Match uppercase letters to filter nouns
-        --AND word NOT IN ('THE', 'AND', 'IN', 'OF', 'TO', 'the', 'and', 'the.')  -- Exclude common words
+        LENGTH(word) > 5
     GROUP BY
         word
     ORDER BY
@@ -49,7 +45,6 @@ def look_for_the_most_common_word():
     conn.close()
 
 
-@monitor_function
 def raise_salary_best_moderators():
     # update
     QUERY = """
@@ -88,7 +83,6 @@ def raise_salary_best_moderators():
     conn.close()
 
 
-@monitor_function
 def most_engaged_users():
     # select
     QUERY = """
@@ -125,7 +119,6 @@ def most_engaged_users():
     conn.close()
 
 
-@monitor_function
 def bad_users():
     # select
     QUERY = """
@@ -165,7 +158,6 @@ def bad_users():
     curr.fetchall()
 
 
-@monitor_function
 def get_average_age_of_users():
     # SELECT
     conn, curr = connect()
@@ -182,7 +174,6 @@ def get_average_age_of_users():
     conn.close()
 
 
-@monitor_function
 def select_all_user_informations():
     # select
     conn, curr = connect()
@@ -199,7 +190,6 @@ def select_all_user_informations():
     return data
 
 
-@monitor_function
 def increase_all_employee_salaries_by_10_percent_every_year():
     # UPDATE
     QUERY = """
@@ -220,16 +210,15 @@ def deleting_all_user_not_connected_for_one_year():
     # DELETE
     QUERY = """
     delete from users
-using users
-	join meetings on users.user_id = meetings.user_id
-	join posts on users.user_id = posts.user_id
-	join comments on users.user_id = comments.user_id
-	join seller on users.user_id = seller.user_id
-	join customer on users.user_id = customer.user_id
-	join marketplace on users.user_id = marketplace.user_id
-where users.user_id in (
-    select user_id from users where user_last_connected < now() - interval '1 year'
-);
+    using users
+        join meetings on users.user_id = meetings.user_id
+        join posts on users.user_id = posts.user_id
+        join comments on users.user_id = comments.user_id
+        join sellers on users.user_id = sellers.user_id
+        join customers on users.user_id = customers.user_id
+    where users.user_id in (
+        select user_id from users where user_last_connected < now() - interval '1 year'
+    );
 """
     conn, curr = connect()
     conn.autocommit = False
