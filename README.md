@@ -27,6 +27,8 @@ There is multiple containers :
 - **pgadmin** : Manage PostgreSQL database, run on `http://localhost:8888`
 - **api** : API written in python, run on `http://localhost:5000`.
 
+If tables are not generated, you can copy paste the SQL script in `sql/init.sql` and run it inside pgAdmin to generate all the tables once.
+
 ## API
 
 - Count the number of rows in the tables :
