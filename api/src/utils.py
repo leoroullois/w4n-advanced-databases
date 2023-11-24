@@ -1,5 +1,6 @@
 import time
 from src.database import connect
+import src.queries
 
 def monitor_function(func, index: bool = False, index_name: str = "btree"):
     def wrapper(*args, **kwargs):
@@ -38,6 +39,14 @@ def push_monitor_data_to_db(name, execution_time, index, index_name):
     finally:
         conn.close()
 
+
+def extract_estimated_cost(func):
+    for quer in query_list:
+        with conn.cursor() as cursor:
+            Read data from database
+            sql = ("SELECT  EXPLAIN  FROM %s" , func.__name__) 
+            cursor.execute(sql)
+    
 
 def separator(func):
     def inner(*args, **kwargs):

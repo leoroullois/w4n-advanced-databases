@@ -2,9 +2,9 @@ import psycopg2
 
 
 def connect():
-    DB_NAME = "leyo"
-    DB_USER = "leyo"
-    DB_PASS = "root"
+    DB_NAME = "postgres"
+    DB_USER = "postgres"
+    DB_PASS = "fuck"
     DB_HOST = "db"
     DB_PORT = "5432"
 
