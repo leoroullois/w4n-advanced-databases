@@ -156,9 +156,9 @@ def main():
     def explain():
         try:
             conn, curr = connect()
+            task6()
             response = {
                 "success": True,
-                "cost": task6()
             }
             return jsonify(response), 200
         except Exception as e:
@@ -169,7 +169,7 @@ def main():
     # task3()
     # logs = task4()
     # task5()
-    task6()
+    # task6()
     app.run(host="0.0.0.0", port=5000)
 
 
