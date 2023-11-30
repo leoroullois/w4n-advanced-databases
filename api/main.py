@@ -4,6 +4,7 @@ from src.task3 import delete_previous_data, task3
 from src.task2 import task2
 from src.task4 import task4
 from src.task5 import task5
+from src.task6 import task6
 
 
 def main():
@@ -151,9 +152,24 @@ def main():
         finally:
             conn.close()
 
+    @app.route("/explain", methods=["GET"])
+    def explain():
+        try:
+            conn, curr = connect()
+            response = {
+                "success": True,
+                "cost": task6()
+            }
+            return jsonify(response), 200
+        except Exception as e:
+            response = {"success": False, "message": f"An error occured: {e}"}
+            return jsonify(response), 500
+        finally:
+            conn.close()
     # task3()
     # logs = task4()
     # task5()
+    task6()
     app.run(host="0.0.0.0", port=5000)
 
 
