@@ -113,7 +113,7 @@ def run_index_tests(index_name: str, NB_ITERATIONS: int = 1):
 
 
 def task5():
-    NB_ITERATIONS = 1
+    NB_ITERATIONS = 5
     index_names = ["hash", "btree", "btree+composite", "btree+function", "btree+composite+function"]
     delete_all_indexes()
     
