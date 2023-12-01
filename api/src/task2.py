@@ -1,7 +1,11 @@
-from src.database import connect
+if __name__ == "__main__" or __name__ == "task2":
+    from database import connect
+else:
+    from src.database import connect
 
 
-def look_for_the_most_common_word():
+
+def look_for_the_most_common_word(get_query: bool = False) -> str:
     # select
     QUERY = """
     WITH NounData AS (
@@ -39,13 +43,16 @@ def look_for_the_most_common_word():
         frequency DESC
     LIMIT 20;
     """
+    if(get_query):
+        return QUERY
     conn, curr = connect()
     curr.execute(QUERY)
     conn.commit()
     conn.close()
+    return QUERY
 
 
-def raise_salary_best_moderators():
+def raise_salary_best_moderators(get_query: bool = False):
     # update
     QUERY = """
     WITH RankedEmployees AS (
@@ -75,15 +82,19 @@ def raise_salary_best_moderators():
             percentile_rank = 1  -- Top 10% of employees
     )
     """
+    if(get_query):
+        return QUERY
+
     conn, curr = connect()
     conn.autocommit = False
     curr.execute(QUERY)
     conn.rollback()
     conn.autocommit = True
     conn.close()
+    return QUERY
 
 
-def most_engaged_users():
+def most_engaged_users(get_query: bool = False):
     # select
     QUERY = """
     WITH UserEngagement AS (
@@ -113,13 +124,16 @@ def most_engaged_users():
         total_engagement DESC
     LIMIT 100;
     """
+    if(get_query):
+        return QUERY
     conn, curr = connect()
     curr.execute(QUERY)
     curr.fetchall()
     conn.close()
+    return QUERY
 
 
-def bad_users():
+def bad_users(get_query: bool = False):
     # select
     QUERY = """
         select users.user_id, nb_bad_comments, nb_bad_posts, user_first_name, user_last_name from users 
@@ -153,12 +167,15 @@ def bad_users():
             order by users.user_id asc
         ) bad_posts on users.user_id = bad_posts.user_id;
     """
+    if(get_query):
+        return QUERY
     conn, curr = connect()
     curr.execute(QUERY)
     curr.fetchall()
+    return QUERY
 
 
-def get_average_age_of_users():
+def get_average_age_of_users(get_query: bool = False):
     # SELECT
     conn, curr = connect()
     QUERY = """
@@ -168,13 +185,16 @@ def get_average_age_of_users():
         max(extract(year from age(user_date_of_birth))) as max_age 
         from users;
     """
-        
+    if(get_query):
+        return QUERY
+
     curr.execute(QUERY)
     curr.fetchall()
     conn.close()
+    return QUERY
 
 
-def select_all_user_informations():
+def select_all_user_informations(get_query: bool = False):
     # select
     conn, curr = connect()
     QUERY = """
@@ -185,12 +205,14 @@ def select_all_user_informations():
         left join sellers on users.user_id = sellers.user_id
         left join customers on users.user_id = customers.user_id;
     """
+    if(get_query):
+        return QUERY
     curr.execute(QUERY)
     data = curr.fetchall()
-    return data
+    return QUERY
 
 
-def increase_all_employee_salaries_by_10_percent_every_year():
+def increase_all_employee_salaries_by_10_percent_every_year(get_query: bool = False):
     # UPDATE
     QUERY = """
     update employees 
@@ -198,15 +220,18 @@ def increase_all_employee_salaries_by_10_percent_every_year():
     	employee_updated_at = now()
     where ((employee_updated_at < now() - interval '1 year') and (employee_salary < 5000));
     """
+    if(get_query):
+        return QUERY
     conn, curr = connect()
     conn.autocommit = False
     curr.execute(QUERY)
     conn.rollback()
     conn.autocommit = True
     conn.close()
+    return QUERY
 
 
-def deleting_all_user_not_connected_for_one_year():
+def deleting_all_user_not_connected_for_one_year(get_query: bool = False):
     # DELETE
     QUERY = """
     delete from users
@@ -219,16 +244,49 @@ def deleting_all_user_not_connected_for_one_year():
     where users.user_id in (
         select user_id from users where user_last_connected < now() - interval '1 year'
     );
-"""
+    """
+    if(get_query):
+        return QUERY
     conn, curr = connect()
     conn.autocommit = False
     curr.execute(QUERY)
     conn.rollback()
     conn.autocommit = True
     conn.close()
+    return QUERY
 
 
-def task2():
+def censorship(get_query: bool = False):
+    QUERY = """
+    WITH sanitized_posts AS (
+    UPDATE posts
+    SET post_content = regexp_replace(post_content, '(fuck|bitch|drug|sex)', '*******', 'gi')
+    WHERE post_content ~* ANY(ARRAY['fuck', 'bitch', 'drug', 'sex'])
+    RETURNING post_id, user_id, post_content
+    ),
+    sanitized_comments AS (
+        UPDATE comments
+        SET comment_content = regexp_replace(comment_content, '(fuck|bitch|drug|sex)', '*******', 'gi')
+        WHERE comment_content ~* ANY(ARRAY['fuck', 'bitch', 'drug', 'sex'])
+        RETURNING comment_id, user_id, post_id, comment_content
+    )
+    SELECT
+        sp.post_id,
+        sp.user_id AS post_user_id,
+        sp.post_content AS sanitized_post_content,
+        sc.comment_id,
+        sc.user_id AS comment_user_id,
+        sc.post_id AS comment_post_id,
+        sc.comment_content AS sanitized_comment_content
+    FROM sanitized_posts sp
+    JOIN sanitized_comments sc ON sp.post_id = sc.post_id;
+    """
+    if(get_query):
+        return QUERY
     conn, curr = connect()
-
+    conn.autocommit = False
+    curr.execute(QUERY)
+    conn.rollback()
+    conn.autocommit = True
     conn.close()
+    return QUERY

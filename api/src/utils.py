@@ -1,6 +1,9 @@
 import time
-from src.database import connect
-import src.queries
+if __name__ == "__main__" or __name__ == "utils":
+    from database import connect
+else:
+    from src.database import connect
+
 
 def monitor_function(func, index: bool = False, index_name: str = "btree"):
     def wrapper(*args, **kwargs):
@@ -28,24 +31,25 @@ def push_monitor_data_to_db(name, execution_time, index, index_name):
                 f"INSERT INTO logs_index (function_name, execution_time, created_at, index_name) VALUES (%s, %s, %s, %s);",
                 (name, execution_time * 1000, created_at, index_name),
             )
+            conn.commit()
         else:
             curr.execute(
                 f"INSERT INTO logs (function_name, execution_time, created_at) VALUES (%s, %s, %s);",
                 (name, execution_time * 1000, created_at),
             )
-        conn.commit()
+            conn.commit()
     except Exception as e:
         print("[ERROR] Monitoring: ", e)
     finally:
         conn.close()
 
 
-def extract_estimated_cost(func):
-    for quer in query_list:
-        with conn.cursor() as cursor:
-            Read data from database
-            sql = ("SELECT  EXPLAIN  FROM %s" , func.__name__) 
-            cursor.execute(sql)
+# def extract_estimated_cost(func):
+#     for quer in query_list:
+#         with conn.cursor() as cursor:
+#             # Read data from database
+#             sql = ("SELECT  EXPLAIN  FROM %s" , func.__name__) 
+#             cursor.execute(sql)
     
 
 def separator(func):

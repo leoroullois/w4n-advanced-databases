@@ -164,6 +164,6 @@ query_deleting_all_user_not_connected_for_one_year = """
     );
 """
 
-force_table_scan = "WHERE 
-
-query_list = [query_most_common_word, query_raise_salary_best_moderators, query_most_engaged_users, query_bad_users, query_get_average_age_of_users, query_get_all_user_information, query_increase_all_employee_salary_by_10_percent_every_year, query_deleting_all_user_not_connected_for_one_year]
+# force_table_scan = """"""WHERE 
+#
+# query_list = [query_most_common_word, query_raise_salary_best_moderators, query_most_engaged_users, query_bad_users, query_get_average_age_of_users, query_get_all_user_information, query_increase_all_employee_salary_by_10_percent_every_year, query_deleting_all_user_not_connected_for_one_year]
