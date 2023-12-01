@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from src.database import connect
 from src.task3 import delete_previous_data, task3
-from src.task2 import task2
 from src.task4 import task4
 from src.task5 import task5
 from src.task6 import task6
@@ -10,16 +9,15 @@ from src.task6 import task6
 def main():
     app = Flask(__name__)
 
-    @app.route("/task2", methods=["GET"])
-    def run_task2():
-        task2()
-        response = {
-            "success": False,
-        }
-        return jsonify(response), 200
-
     @app.route("/task3", methods=["PUT"])
     def run_task3():
+        if(not request.json):
+            response = {
+                "success": False,
+                "message": "No data provided",
+            }
+            return jsonify(response), 400
+
         NB_EMPLOYEES = request.json["NB_EMPLOYEES"]
         NB_MANAGERS = request.json["NB_MANAGERS"]
         NB_POSTS = request.json["NB_POSTS"]
@@ -88,8 +86,8 @@ def main():
 
     @app.route("/delete", methods=["DELETE"])
     def delete_data():
+        conn, curr = connect()
         try:
-            conn, curr = connect()
             delete_previous_data(conn, curr)
             response = {"success": True, "message": "Data successfully deleted"}
             return jsonify(response), 200
@@ -101,8 +99,8 @@ def main():
 
     @app.route("/count", methods=["GET"])
     def count():
+        conn, curr = connect()
         try:
-            conn, curr = connect()
             curr.execute("SELECT COUNT(*) FROM users;")
             users = curr.fetchall()[0][0]
             curr.execute("SELECT COUNT(*) FROM posts;")
@@ -154,8 +152,8 @@ def main():
 
     @app.route("/explain", methods=["GET"])
     def explain():
+        conn, curr = connect()
         try:
-            conn, curr = connect()
             task6()
             response = {
                 "success": True,
@@ -166,10 +164,6 @@ def main():
             return jsonify(response), 500
         finally:
             conn.close()
-    # task3()
-    # logs = task4()
-    # task5()
-    # task6()
     app.run(host="0.0.0.0", port=5000)
 
 

@@ -1,6 +1,9 @@
 import time
-from src.database import connect
-import src.queries
+if __name__ == "__main__" or __name__ == "utils":
+    from database import connect
+else:
+    from src.database import connect
+
 
 def monitor_function(func, index: bool = False, index_name: str = "btree"):
     def wrapper(*args, **kwargs):

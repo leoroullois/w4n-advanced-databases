@@ -1,4 +1,3 @@
-print(__name__)
 if __name__ == "__main__" or __name__ == "task2":
     from database import connect
 else:
@@ -245,6 +244,42 @@ def deleting_all_user_not_connected_for_one_year(get_query: bool = False):
     where users.user_id in (
         select user_id from users where user_last_connected < now() - interval '1 year'
     );
+    """
+    if(get_query):
+        return QUERY
+    conn, curr = connect()
+    conn.autocommit = False
+    curr.execute(QUERY)
+    conn.rollback()
+    conn.autocommit = True
+    conn.close()
+    return QUERY
+
+
+def censorship(get_query: bool = False):
+    QUERY = """
+    WITH sanitized_posts AS (
+    UPDATE posts
+    SET post_content = regexp_replace(post_content, '(fuck|bitch|drug|sex)', '*******', 'gi')
+    WHERE post_content ~* ANY(ARRAY['fuck', 'bitch', 'drug', 'sex'])
+    RETURNING post_id, user_id, post_content
+    ),
+    sanitized_comments AS (
+        UPDATE comments
+        SET comment_content = regexp_replace(comment_content, '(fuck|bitch|drug|sex)', '*******', 'gi')
+        WHERE comment_content ~* ANY(ARRAY['fuck', 'bitch', 'drug', 'sex'])
+        RETURNING comment_id, user_id, post_id, comment_content
+    )
+    SELECT
+        sp.post_id,
+        sp.user_id AS post_user_id,
+        sp.post_content AS sanitized_post_content,
+        sc.comment_id,
+        sc.user_id AS comment_user_id,
+        sc.post_id AS comment_post_id,
+        sc.comment_content AS sanitized_comment_content
+    FROM sanitized_posts sp
+    JOIN sanitized_comments sc ON sp.post_id = sc.post_id;
     """
     if(get_query):
         return QUERY

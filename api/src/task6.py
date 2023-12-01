@@ -1,3 +1,7 @@
+"""
+Getting the cost of queries and push them to the database
+"""
+
 if __name__ == "__main__":
     from database import connect
     from task2 import bad_users, deleting_all_user_not_connected_for_one_year, get_average_age_of_users, increase_all_employee_salaries_by_10_percent_every_year, look_for_the_most_common_word, most_engaged_users, raise_salary_best_moderators, select_all_user_informations

@@ -14,9 +14,8 @@ def connect():
         conn = psycopg2.connect(
             database=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT
         )
-        print("Database connected successfully")
     except:
-        print("Database not connected successfully")
+        print("[ERROR] Database not connected successfully")
         exit(1)
 
     curr = conn.cursor()
