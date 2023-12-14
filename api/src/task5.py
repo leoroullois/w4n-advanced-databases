@@ -3,6 +3,9 @@ Task 5, 6 and 7
 Create indexes, launch a benchmark with and without indexes and push the result in the database.
 """
 
+import psycopg2
+
+
 if __name__ == "__main__":
     from database import connect
     from utils import monitor_function
@@ -11,6 +14,17 @@ else:
     from src.database import connect
     from src.utils import monitor_function
     from src.task2 import bad_users, deleting_all_user_not_connected_for_one_year, get_average_age_of_users, increase_all_employee_salaries_by_10_percent_every_year, look_for_the_most_common_word, most_engaged_users, raise_salary_best_moderators, select_all_user_informations, censorship
+
+def clear_cache_for_table(table_name):
+    conn, curr = connect()
+    try:
+        curr.execute(f"SELECT pg_stat_statements_reset('{table_name}')")
+        conn.commit()
+    except psycopg2.Error as e:
+        print(f"Error clearing cache: {e}")
+    finally:
+        if conn:
+            conn.close()
 
 
 def delete_all_indexes():
@@ -113,8 +127,9 @@ def run_index_tests(index_name: str, NB_ITERATIONS: int = 1):
 
 
 def task5():
-    NB_ITERATIONS = 5
+    NB_ITERATIONS = 1
     index_names = ["hash", "btree", "btree+composite", "btree+function", "btree+composite+function"]
+    # index_names = ["btree+composite+function"]
     delete_all_indexes()
     
     for _ in range(NB_ITERATIONS):
@@ -128,9 +143,13 @@ def task5():
             monitor_function(censorship, index=False)()
             # monitor_function(deleting_all_user_not_connected_for_one_year, index=False)()
 
+    tables_names = ["users", "marketplace", "posts", "comments", "employees", "customers", "departments"]
     for index_name in index_names:
         delete_all_indexes()
+        for table_name in tables_names:
+            clear_cache_for_table(table_name)
         
+
         if index_name == "hash":
             create_indexes_hash()
             run_index_tests(index_name, NB_ITERATIONS)
