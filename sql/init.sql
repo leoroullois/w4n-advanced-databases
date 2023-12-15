@@ -232,3 +232,14 @@ CREATE TABLE IF NOT EXISTS public.logs_index
     CONSTRAINT logs_index_pkey PRIMARY KEY (id)
 )
 TABLESPACE pg_default;
+
+
+CREATE TABLE IF NOT EXISTS public.logs_partition
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    function_name text COLLATE pg_catalog."default" NOT NULL,
+    execution_time integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    CONSTRAINT logs_partition_pkey PRIMARY KEY (id)
+)
+TABLESPACE pg_default;
