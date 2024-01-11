@@ -152,16 +152,16 @@ def benchmark():
             # monitor_function(deleting_all_user_not_connected_for_one_year, index=False)()
 
 
-    for _ in range(NB_ITERATIONS):
-            monitor_function(p_select_all_user_informations, partition=True, partition_db=True)()
-            monitor_function(p_raise_salary_best_moderators, partition=True, partition_db=True)()
-            monitor_function(p_look_for_the_most_common_word, partition=True, partition_db=True)()
-            monitor_function(p_most_engaged_users, partition=True, partition_db=True)()
-            monitor_function(p_get_average_age_of_users, partition=True, partition_db=True)()
-            monitor_function(p_increase_all_employee_salaries_by_10_percent_every_year, partition=True, partition_db=True)()
-            monitor_function(p_bad_users, partition=True, partition_db=True)()
-            monitor_function(p_censorship, partition=True, partition_db=True)()
-            # monitor_function(p_deleting_all_user_not_connected_for_one_year, partition=True)()
+    # for _ in range(NB_ITERATIONS):
+    #         monitor_function(p_select_all_user_informations, partition=True, partition_db=True)()
+    #         monitor_function(p_raise_salary_best_moderators, partition=True, partition_db=True)()
+    #         monitor_function(p_look_for_the_most_common_word, partition=True, partition_db=True)()
+    #         monitor_function(p_most_engaged_users, partition=True, partition_db=True)()
+    #         monitor_function(p_get_average_age_of_users, partition=True, partition_db=True)()
+    #         monitor_function(p_increase_all_employee_salaries_by_10_percent_every_year, partition=True, partition_db=True)()
+    #         monitor_function(p_bad_users, partition=True, partition_db=True)()
+    #         monitor_function(p_censorship, partition=True, partition_db=True)()
+    #         # monitor_function(p_deleting_all_user_not_connected_for_one_year, partition=True)()
 
 def build_partition_employees():
     
