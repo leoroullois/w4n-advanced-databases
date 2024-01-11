@@ -1,7 +1,7 @@
 import psycopg2
 
 
-def connect():
+def connect(partition: bool = False):
     DB_NAME = "leyo"
     DB_USER = "leyo"
     DB_PASS = "root"
@@ -11,9 +11,14 @@ def connect():
     conn = None
     curr = None
     try:
-        conn = psycopg2.connect(
-            database=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT
-        )
+        if(partition):
+            conn = psycopg2.connect(
+                database="leyopartitions", user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT
+            )
+        else:
+            conn = psycopg2.connect(
+                database=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT
+            )
     except:
         print("[ERROR] Database not connected successfully")
         exit(1)
