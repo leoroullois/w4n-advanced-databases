@@ -3,6 +3,9 @@ services:
   db:
     image: postgres
     container_name: ad_db
+    build:
+      context: ./sql/
+      dockerfile: Dockerfile
     ports:
       - "5432:5432"
     environment:
@@ -11,18 +14,10 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
       - ad_pgdata:/var/lib/postgresql/data
-    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=200
+    # command: postgres -c shared_preload_libraries="pg_stat_statements" -c pg_stat_statements.track=all -c max_connections=200
     networks:
       ad:
          # ipv4_address: 172.18.0.3
-    deploy:
-      resources:
-        limits:
-          cpus: '10'
-          memory: 8000M
-        reservations:
-          cpus: '8'
-          memory: 5000M
   pgadmin:
     image: dpage/pgadmin4
     container_name: ad_pgpadmin
